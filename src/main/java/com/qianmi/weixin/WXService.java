@@ -1,8 +1,9 @@
 package com.qianmi.weixin;
 
 import com.qianmi.weixin.bean.back.WXAccessToken;
+import com.qianmi.weixin.bean.back.WXOAuthAccessToken;
 import com.qianmi.weixin.bean.back.WXUser;
-import com.qianmi.weixin.bean.send.WXJSApiSignature;
+import com.qianmi.weixin.bean.back.WXJSApiSignature;
 import com.qianmi.weixin.bean.send.WXServiceMessage;
 import com.qianmi.weixin.bean.send.WXTemplateMessage;
 import com.qianmi.weixin.exception.WXException;
@@ -50,12 +51,11 @@ public interface WXService {
 
     /**
      * 获取微信客户端详细信息
-     *
-     * @param openid
+     * @param token
      * @return
      * @throws WXException
      */
-    public WXUser getUser(String openid) throws WXException;
+    public WXUser getUser(WXOAuthAccessToken token) throws WXException;
 
     /**
      * 发送模板消息
@@ -99,25 +99,16 @@ public interface WXService {
      * @return
      * @throws WXException
      */
-    public WXAccessToken getUserAccessToken(String code) throws WXException;
+    public WXOAuthAccessToken getUserAccessToken(String code) throws WXException;
 
     /**
      * 刷新
-     *
-     * @param wxAccessToken
-     * @return
-     * @throws WXException
-     */
-    public WXAccessToken refreshUserAccessToken(WXAccessToken wxAccessToken) throws WXException;
-
-    /**
-     * 当调用getInfoUrl的时候, 后续可以调用这个方法
      *
      * @param accessToken
      * @return
      * @throws WXException
      */
-    public WXUser getUser(WXAccessToken accessToken) throws WXException;
+    public WXOAuthAccessToken refreshUserAccessToken(WXOAuthAccessToken accessToken) throws WXException;
 
     /**
      * 配置项

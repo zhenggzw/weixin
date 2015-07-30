@@ -1,4 +1,4 @@
-package com.qianmi.weixin.bean.send;
+package com.qianmi.weixin.bean.back;
 
 /**
  * Created by Administrator on 2015/7/29.
