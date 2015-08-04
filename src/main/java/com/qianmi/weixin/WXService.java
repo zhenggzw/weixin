@@ -1,9 +1,6 @@
 package com.qianmi.weixin;
 
-import com.qianmi.weixin.bean.back.WXAccessToken;
-import com.qianmi.weixin.bean.back.WXOAuthAccessToken;
-import com.qianmi.weixin.bean.back.WXUser;
-import com.qianmi.weixin.bean.back.WXJSApiSignature;
+import com.qianmi.weixin.bean.back.*;
 import com.qianmi.weixin.bean.send.WXServiceMessage;
 import com.qianmi.weixin.bean.send.WXTemplateMessage;
 import com.qianmi.weixin.exception.WXException;
@@ -64,7 +61,7 @@ public interface WXService {
      * @return
      * @throws WXException
      */
-    public String templateSend(WXTemplateMessage templateMessage) throws WXException;
+    public WXTemplateResult sendTemplateMessage(WXTemplateMessage templateMessage) throws WXException;
 
     /**
      * 用于只是获取openid

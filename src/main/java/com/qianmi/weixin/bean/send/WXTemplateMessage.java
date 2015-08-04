@@ -1,5 +1,6 @@
 package com.qianmi.weixin.bean.send;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -78,5 +79,17 @@ public class WXTemplateMessage {
 
     public void setTopColor(String topColor) {
         this.topColor = topColor;
+    }
+
+    public WXTemplateMessage addData(String name, String value) {
+        return this.addData(name, value, null);
+    }
+
+    public WXTemplateMessage addData(String name, String value, String color) {
+        if (templateDataList == null) {
+            templateDataList = new LinkedList<WXTemplateData>();
+        }
+        templateDataList.add(new WXTemplateData(name, value, color));
+        return this;
     }
 }

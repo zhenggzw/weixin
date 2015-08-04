@@ -19,6 +19,9 @@ public class WXRequestHandler implements ResponseHandler {
 
     private Class resultType;
 
+    public WXRequestHandler() {
+    }
+
     public WXRequestHandler(Class resultType) {
         this.resultType = resultType;
     }
@@ -32,8 +35,12 @@ public class WXRequestHandler implements ResponseHandler {
             throw new WXException("");
         } else {
             String content = EntityUtils.toString(entity);
-            Object o = JSON.parseObject(content, resultType);
-            return o;
+            if (resultType == null) {
+                return content;
+            } else {
+                Object o = JSON.parseObject(content, resultType);
+                return o;
+            }
         }
     }
 }

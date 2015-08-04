@@ -1,15 +1,15 @@
 package com.qianmi.weixin.mp;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.qianmi.weixin.WXContext;
 import com.qianmi.weixin.WXService;
-import com.qianmi.weixin.bean.back.WXAccessToken;
-import com.qianmi.weixin.bean.back.WXOAuthAccessToken;
-import com.qianmi.weixin.bean.back.WXUser;
-import com.qianmi.weixin.bean.back.WXJSApiSignature;
+import com.qianmi.weixin.bean.back.*;
 import com.qianmi.weixin.bean.send.WXServiceMessage;
 import com.qianmi.weixin.bean.send.WXTemplateMessage;
 import com.qianmi.weixin.exception.WXException;
 import com.qianmi.weixin.kit.http.WXRequest;
+import com.qianmi.weixin.kit.http.WXRequestErrorHandler;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -21,7 +21,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * author: Tkk
  * date: 2015/7/30
  */
-public class WXServiceImpl implements WXService {
+public class WXServiceImpl implements WXService, WXRequestErrorHandler {
 
     /**
      *
@@ -55,7 +55,7 @@ public class WXServiceImpl implements WXService {
         try {
             if (context.getToken() == null) {
                 String url = String.format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", context.getAppId(), context.getSecret());
-                WXAccessToken accessToken = request.get(url, WXAccessToken.class);
+                WXAccessToken accessToken = request.jsonGet(url, WXAccessToken.class);
                 context.setToken(accessToken);
             }
         }
@@ -79,12 +79,15 @@ public class WXServiceImpl implements WXService {
     @Override
     public WXUser getUser(WXOAuthAccessToken token) throws WXException {
         String url = String.format("https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN", token.getAccessToken(), token.getOpenId());
-        WXUser wxUser = request.get(url, WXUser.class);
+        WXUser wxUser = request.jsonGet(url, WXUser.class);
         return wxUser;
     }
 
     @Override
-    public String templateSend(WXTemplateMessage templateMessage) throws WXException {
+    public WXTemplateResult sendTemplateMessage(WXTemplateMessage templateMessage) throws WXException {
+        String url = String.format("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", context.getToken().getAccessToken());
+        String jsonParam = JSON.toJSONString(templateMessage);
+        WXTemplateResult result = request.jsonPost(url, jsonParam, WXTemplateResult.class);
         return null;
     }
 
@@ -115,20 +118,39 @@ public class WXServiceImpl implements WXService {
     @Override
     public WXOAuthAccessToken getUserAccessToken(String code) throws WXException {
         String url = String.format("https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code", context.getAppId(), context.getSecret(), code);
-        WXOAuthAccessToken accessToken = request.get(url, WXOAuthAccessToken.class);
+        WXOAuthAccessToken accessToken = request.jsonGet(url, WXOAuthAccessToken.class);
         return accessToken;
     }
 
     @Override
     public WXOAuthAccessToken refreshUserAccessToken(WXOAuthAccessToken wxAccessToken) throws WXException {
         String url = String.format("https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=", context.getAppId(), wxAccessToken.getRefreshToken());
-        WXOAuthAccessToken accessToken = request.get(url, WXOAuthAccessToken.class);
+        WXOAuthAccessToken accessToken = request.jsonGet(url, WXOAuthAccessToken.class);
         return accessToken;
     }
 
     @Override
     public void setContext(WXContext context) {
         this.context = context;
-        this.request = new WXRequest();
+        this.request = new WXRequest(this);
+    }
+
+    @Override
+    public boolean isError(int code) {
+        return code != 0;
+    }
+
+    @Override
+    public boolean errorHandler(int errorCode) {
+        boolean canbeReplay = false;
+        switch (errorCode) {
+
+            //过期了, 可以重新发送
+            case 42001:
+            case 40001:
+                this.getAccessToken(true);
+                canbeReplay = true;
+        }
+        return canbeReplay;
     }
 }

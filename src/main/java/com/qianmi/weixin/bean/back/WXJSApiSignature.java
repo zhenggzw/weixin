@@ -5,7 +5,7 @@ package com.qianmi.weixin.bean.back;
  */
 public class WXJSApiSignature {
 
-    private String noncestr;
+    private String nonceStr;
 
     private String jsapiTicket;
 
@@ -15,12 +15,12 @@ public class WXJSApiSignature {
 
     private String signature;
 
-    public String getNoncestr() {
-        return noncestr;
+    public String getNonceStr() {
+        return nonceStr;
     }
 
-    public void setNoncestr(String noncestr) {
-        this.noncestr = noncestr;
+    public void setNonceStr(String nonceStr) {
+        this.nonceStr = nonceStr;
     }
 
     public String getJsapiTicket() {
