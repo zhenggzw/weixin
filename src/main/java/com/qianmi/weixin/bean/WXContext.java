@@ -1,15 +1,25 @@
-package com.qianmi.weixin;
+package com.qianmi.weixin.bean;
 
 import com.qianmi.weixin.bean.back.WXAccessToken;
+import com.qianmi.weixin.bean.back.WXJSTicket;
 
 /**
  * Created by Administrator on 2015/7/29.
  */
 public class WXContext {
-    protected volatile String appId;
-    protected volatile String secret;
-    protected volatile WXAccessToken token;
-    protected volatile String redirectUri;
+    private String appId;
+    private String secret;
+    private WXAccessToken token;
+    private WXJSTicket jsTicket;
+    private String redirectUri;
+
+    public WXJSTicket getJsTicket() {
+        return jsTicket;
+    }
+
+    public void setJsTicket(WXJSTicket jsTicket) {
+        this.jsTicket = jsTicket;
+    }
 
     public String getAppId() {
         return appId;

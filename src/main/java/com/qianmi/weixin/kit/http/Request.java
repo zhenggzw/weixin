@@ -1,13 +1,15 @@
 package com.qianmi.weixin.kit.http;
 
-import com.alibaba.fastjson.JSONObject;
 import com.qianmi.weixin.exception.WXException;
+import org.apache.http.HttpEntity;
+import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -27,6 +29,11 @@ public class Request {
         this.httpClient = HttpClients.createDefault();
     }
 
+    /**
+     * @param url
+     * @param param
+     * @return
+     */
     public String get(String url, Map<String, Object> param) {
         Set<String> keys = param.keySet();
         StringBuilder sb = new StringBuilder(param.size() * 20);
@@ -58,8 +65,14 @@ public class Request {
         CloseableHttpResponse response = null;
         try {
             response = httpClient.execute(httpGet);
-            String content = new WXRequestHandler().handleResponse(response).toString();
-            return content;
+            StatusLine statusLine = response.getStatusLine();
+            HttpEntity entity = response.getEntity();
+            if (statusLine.getStatusCode() >= 300) {
+                EntityUtils.consume(entity);
+                return null;
+            } else {
+                return EntityUtils.toString(entity);
+            }
         } catch (IOException e) {
             throw new WXException(e.getMessage());
         } finally {
@@ -74,6 +87,14 @@ public class Request {
 
     /**
      * @param url
+     * @return
+     */
+    public String post(String url) {
+        return post(url, null);
+    }
+
+    /**
+     * @param url
      * @param <T>
      * @return
      */
@@ -81,7 +102,11 @@ public class Request {
         HttpPost httpPost = new HttpPost(url);
 
         //
-        if (param instanceof String) {
+        if (param == null) {
+            //
+        }
+        //
+        else if (param instanceof String) {
             StringEntity entity = new StringEntity(param.toString(), "UTF-8");
             httpPost.setEntity(entity);
         }
@@ -93,8 +118,14 @@ public class Request {
         CloseableHttpResponse response = null;
         try {
             response = httpClient.execute(httpPost);
-            String content =  new WXRequestHandler().handleResponse(response).toString();
-            return content;
+            StatusLine statusLine = response.getStatusLine();
+            HttpEntity entity = response.getEntity();
+            if (statusLine.getStatusCode() >= 300) {
+                EntityUtils.consume(entity);
+                return null;
+            } else {
+                return EntityUtils.toString(entity);
+            }
         } catch (IOException e) {
             throw new WXException(e.getMessage());
         } finally {

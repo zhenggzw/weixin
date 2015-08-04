@@ -3,7 +3,7 @@ package com.qianmi.weixin.bean.back;
 /**
  * Created by Administrator on 2015/7/29.
  */
-public class WXJSApiSignature {
+public class WXJSSignature {
 
     private String nonceStr;
 

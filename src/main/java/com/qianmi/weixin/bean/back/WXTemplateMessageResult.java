@@ -4,7 +4,7 @@ package com.qianmi.weixin.bean.back;
  * author: Tkk
  * date: 2015/8/4
  */
-public class WXTemplateResult {
+public class WXTemplateMessageResult {
     private String msgid;
 
     public String getMsgid() {

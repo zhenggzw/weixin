@@ -24,7 +24,7 @@ public class WXRequest extends Request {
      * @param <T>
      * @return
      */
-    public <T> T jsonGet(String url, Class<T> resultType) {
+    public <T> T jsonGet(String url, Class<T> resultType) throws WXException {
         return jsonGet(url, null, resultType);
     }
 
@@ -33,7 +33,7 @@ public class WXRequest extends Request {
      * @param <T>
      * @return
      */
-    public <T> T jsonGet(String url, Map<String, Object> param, Class<T> resultType) {
+    public <T> T jsonGet(String url, Map<String, Object> param, Class<T> resultType) throws WXException {
         String result = get(url, param);
         JSONObject object = JSONObject.parseObject(result);
         int code = object.getInteger("errorCode");
@@ -54,10 +54,21 @@ public class WXRequest extends Request {
 
     /**
      * @param url
+     * @param resultType
+     * @param <T>
+     * @return
+     * @throws WXException
+     */
+    public <T> T jsonPost(String url, Class<T> resultType) throws WXException {
+        return jsonPost(url, null, resultType);
+    }
+
+    /**
+     * @param url
      * @param <T>
      * @return
      */
-    public <T> T jsonPost(String url, Object param, Class<T> resultType) {
+    public <T> T jsonPost(String url, Object param, Class<T> resultType) throws WXException {
         String result = post(url, param);
         JSONObject object = JSONObject.parseObject(result);
         int code = object.getInteger("errorCode");

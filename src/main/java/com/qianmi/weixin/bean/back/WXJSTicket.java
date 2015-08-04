@@ -4,7 +4,7 @@ package com.qianmi.weixin.bean.back;
  * author: Tkk
  * date: 2015/7/30
  */
-public class WXJSApiTicket {
+public class WXJSTicket {
 
     private String ticket;
 
