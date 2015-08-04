@@ -81,8 +81,8 @@ public class WXJSServiceImpl implements WXJSService {
         //锁, 防止其他再去请求了, 有限制
         refreshTokenLock.lock();
         try {
-            if (context.getToken() == null) {
-                String url = String.format("https://api.weixin.qq.com/cgi-bin/ticket/getticket?type=jsapi&access_token", context.getToken().getAccessToken());
+            if (context.getAccessToken() == null) {
+                String url = String.format("https://api.weixin.qq.com/cgi-bin/ticket/getticket?type=jsapi&access_token", context.getAccessToken().getAccessToken());
                 WXJSTicket jsonTicket = request.jsonGet(url, WXJSTicket.class);
                 context.setJsTicket(jsonTicket);
             }

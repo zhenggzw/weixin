@@ -10,11 +10,13 @@ import com.qianmi.weixin.exception.WXException;
 import com.qianmi.weixin.kit.http.WXRequest;
 import com.qianmi.weixin.kit.http.WXRequestErrorHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * author: Tkk
  * date: 2015/8/4
  */
+@Service
 public class WXMessageServiceImpl implements WXMessageService {
 
     /**
@@ -40,7 +42,7 @@ public class WXMessageServiceImpl implements WXMessageService {
 
     @Override
     public WXTemplateMessageResult sendTemplateMessage(WXTemplateMessage templateMessage) throws WXException {
-        String url = String.format("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", context.getToken().getAccessToken());
+        String url = String.format("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", context.getAccessToken().getAccessToken());
         String jsonParam = JSON.toJSONString(templateMessage);
         WXTemplateMessageResult result = request.jsonPost(url, jsonParam, WXTemplateMessageResult.class);
         return result;

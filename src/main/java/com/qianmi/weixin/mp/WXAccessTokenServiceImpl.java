@@ -44,23 +44,23 @@ public class WXAccessTokenServiceImpl implements WXAccessTokenService, WXRequest
     public WXAccessToken getAccessToken(boolean force) throws WXException {
         //强制刷新, 就重置
         if (force) {
-            context.setToken(null);
+            context.setAccessToken(null);
         }
 
         //锁, 防止其他再去请求了, 有限制
         refreshTokenLock.lock();
         try {
-            if (context.getToken() == null) {
+            if (context.getAccessToken() == null) {
                 String url = String.format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", context.getAppId(), context.getSecret());
                 WXAccessToken accessToken = request.jsonGet(url, WXAccessToken.class);
-                context.setToken(accessToken);
+                context.setAccessToken(accessToken);
             }
         }
         //
         finally {
             refreshTokenLock.unlock();
         }
-        return context.getToken();
+        return context.getAccessToken();
     }
 
     @Override

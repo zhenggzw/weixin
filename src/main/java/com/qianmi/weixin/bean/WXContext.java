@@ -9,9 +9,19 @@ import com.qianmi.weixin.bean.back.WXJSTicket;
 public class WXContext {
     private String appId;
     private String secret;
-    private WXAccessToken token;
+    private String token;
+
+    private WXAccessToken accessToken;
     private WXJSTicket jsTicket;
     private String redirectUri;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 
     public WXJSTicket getJsTicket() {
         return jsTicket;
@@ -37,12 +47,12 @@ public class WXContext {
         this.secret = secret;
     }
 
-    public WXAccessToken getToken() {
-        return token;
+    public WXAccessToken getAccessToken() {
+        return accessToken;
     }
 
-    public void setToken(WXAccessToken token) {
-        this.token = token;
+    public void setAccessToken(WXAccessToken token) {
+        this.accessToken = token;
     }
 
     public String getRedirectUri() {
