@@ -1,9 +1,9 @@
 package com.qianmi.weixin.mp;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.qianmi.weixin.WXMessageService;
 import com.qianmi.weixin.bean.WXContext;
-import com.qianmi.weixin.bean.back.WXTemplateMessageResult;
 import com.qianmi.weixin.bean.send.WXServiceMessage;
 import com.qianmi.weixin.bean.send.WXTemplateMessage;
 import com.qianmi.weixin.exception.WXException;
@@ -41,10 +41,10 @@ public class WXMessageServiceImpl implements WXMessageService {
     }
 
     @Override
-    public WXTemplateMessageResult sendTemplateMessage(WXTemplateMessage templateMessage) throws WXException {
+    public String sendTemplateMessage(WXTemplateMessage templateMessage) throws WXException {
         String url = String.format("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", context.getAccessToken().getAccessToken());
         String jsonParam = JSON.toJSONString(templateMessage);
-        WXTemplateMessageResult result = request.jsonPost(url, jsonParam, WXTemplateMessageResult.class);
-        return result;
+        JSONObject result = request.jsonPost(url, jsonParam, null);
+        return result.getString("msgid");
     }
 }

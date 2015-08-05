@@ -64,7 +64,7 @@ public class WXServiceImpl implements WXService {
     }
 
     @Override
-    public WXTemplateMessageResult sendTemplateMessage(WXTemplateMessage templateMessage) throws WXException {
+    public String sendTemplateMessage(WXTemplateMessage templateMessage) throws WXException {
         return wxMessageService.sendTemplateMessage(templateMessage);
     }
 

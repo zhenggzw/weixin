@@ -1,6 +1,5 @@
 package com.qianmi.weixin;
 
-import com.qianmi.weixin.bean.back.WXTemplateMessageResult;
 import com.qianmi.weixin.bean.send.WXServiceMessage;
 import com.qianmi.weixin.bean.send.WXTemplateMessage;
 import com.qianmi.weixin.exception.WXException;
@@ -26,5 +25,5 @@ public interface WXMessageService {
      * @return
      * @throws WXException
      */
-    public WXTemplateMessageResult sendTemplateMessage(WXTemplateMessage templateMessage) throws WXException;
+    public String sendTemplateMessage(WXTemplateMessage templateMessage) throws WXException;
 }

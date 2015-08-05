@@ -83,7 +83,12 @@ public class WXRequest extends Request {
         }
         //
         else {
-            return JSONObject.parseObject(result, resultType);
+            if (resultType == null){
+                return (T) JSONObject.parseObject(result);
+            }
+            else{
+                return JSONObject.parseObject(result, resultType);
+            }
         }
     }
 }
