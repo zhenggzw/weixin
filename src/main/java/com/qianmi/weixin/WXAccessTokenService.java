@@ -7,7 +7,7 @@ import com.qianmi.weixin.exception.WXException;
  * author: Tkk
  * date: 2015/8/4
  */
-public interface WXAccessTokenService {
+public interface WXAccessTokenService  {
 
     /**
      * 刷新

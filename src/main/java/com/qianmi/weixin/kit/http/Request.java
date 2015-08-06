@@ -35,22 +35,24 @@ public class Request {
      * @return
      */
     public String get(String url, Map<String, Object> param) {
-        Set<String> keys = param.keySet();
-        StringBuilder sb = new StringBuilder(param.size() * 20);
-        for (String key : keys) {
-            try {
-                sb.append(key)
-                        .append('=')
-                        .append(URLEncoder.encode(param.get(key).toString(), "UTF-8"))
-                        .append('&');
-            } catch (UnsupportedEncodingException e) {
+        if (param != null) {
+            Set<String> keys = param.keySet();
+            StringBuilder sb = new StringBuilder(param.size() * 20);
+            for (String key : keys) {
+                try {
+                    sb.append(key)
+                            .append('=')
+                            .append(URLEncoder.encode(param.get(key).toString(), "UTF-8"))
+                            .append('&');
+                } catch (UnsupportedEncodingException e) {
+                }
             }
-        }
-        sb.trimToSize();
-        if (url.indexOf('?') == -1) {
-            url = url + '?' + sb.toString();
-        } else {
-            url = url + '&' + sb.toString();
+            sb.trimToSize();
+            if (url.indexOf('?') == -1) {
+                url = url + '?' + sb.toString();
+            } else {
+                url = url + '&' + sb.toString();
+            }
         }
         return get(url);
     }

@@ -81,6 +81,14 @@ public class WXTemplateMessage {
         this.topColor = topColor;
     }
 
+    public List<WXTemplateData> getTemplateDataList() {
+        return templateDataList;
+    }
+
+    public void setTemplateDataList(List<WXTemplateData> templateDataList) {
+        this.templateDataList = templateDataList;
+    }
+
     public WXTemplateMessage addData(String name, String value) {
         return this.addData(name, value, null);
     }

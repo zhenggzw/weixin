@@ -1,14 +1,17 @@
 package com.qianmi.weixin.mp;
 
+import com.alibaba.fastjson.JSONObject;
 import com.qianmi.weixin.WXAccessTokenService;
 import com.qianmi.weixin.bean.WXContext;
 import com.qianmi.weixin.bean.back.WXAccessToken;
 import com.qianmi.weixin.exception.WXException;
 import com.qianmi.weixin.kit.http.WXRequest;
 import com.qianmi.weixin.kit.http.WXRequestErrorHandler;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -17,7 +20,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * date: 2015/8/4
  */
 @Service
-public class WXAccessTokenServiceImpl implements WXAccessTokenService, WXRequestErrorHandler {
+public class WXAccessTokenServiceImpl implements WXAccessTokenService, WXRequestErrorHandler, InitializingBean {
 
     /**
      *
@@ -52,7 +55,13 @@ public class WXAccessTokenServiceImpl implements WXAccessTokenService, WXRequest
         try {
             if (context.getAccessToken() == null) {
                 String url = String.format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", context.getAppId(), context.getSecret());
-                WXAccessToken accessToken = request.jsonGet(url, WXAccessToken.class);
+                Date now = new Date();
+                JSONObject jsonObject = request.jsonGet(url, null);
+                WXAccessToken accessToken = new WXAccessToken();
+                accessToken.setAccessToken(jsonObject.getString("access_token"));
+                accessToken.setExpiresIn(jsonObject.getInteger("expires_in"));
+                now.setTime(now.getTime() + accessToken.getExpiresIn() * 1000);
+                accessToken.setExpireTime(now);
                 context.setAccessToken(accessToken);
             }
         }
@@ -80,5 +89,11 @@ public class WXAccessTokenServiceImpl implements WXAccessTokenService, WXRequest
                 canbeReplay = true;
         }
         return canbeReplay;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        WXAccessToken accessToken = getAccessToken();
+        context.setAccessToken(accessToken);
     }
 }

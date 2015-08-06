@@ -36,19 +36,27 @@ public class WXRequest extends Request {
     public <T> T jsonGet(String url, Map<String, Object> param, Class<T> resultType) throws WXException {
         String result = get(url, param);
         JSONObject object = JSONObject.parseObject(result);
-        int code = object.getInteger("errorCode");
+        Integer errorCode = null;
+        try {
+            object.getInteger("errcode");
+        } catch (Exception e) {
+        }
 
         //如果是错误, 并且这个错误能消化
-        if (errorHandler.isError(code) && errorHandler.errorHandler(code)) {
+        if (errorCode != null && errorHandler.isError(errorCode) && errorHandler.errorHandler(errorCode)) {
             return jsonGet(url, param, resultType);
         }
         //
-        else if (errorHandler.isError(code)) {
-            throw new WXException(String.format("请求: %s 错误码: %s", url, code));
+        else if (errorCode != null && errorHandler.isError(errorCode)) {
+            throw new WXException(String.format("请求: %s 错误码: %s", url, errorCode));
         }
         //
         else {
-            return JSONObject.parseObject(result, resultType);
+            if (resultType != null) {
+                return JSONObject.parseObject(result, resultType);
+            } else {
+                return (T) object;
+            }
         }
     }
 
@@ -71,22 +79,26 @@ public class WXRequest extends Request {
     public <T> T jsonPost(String url, Object param, Class<T> resultType) throws WXException {
         String result = post(url, param);
         JSONObject object = JSONObject.parseObject(result);
-        int code = object.getInteger("errorCode");
+        //
+        Integer errorCode = null;
+        try {
+            object.getInteger("errcode");
+        } catch (Exception e) {
+        }
 
         //如果是错误, 并且这个错误能消化
-        if (errorHandler.isError(code) && errorHandler.errorHandler(code)) {
+        if (errorCode != null && errorHandler.isError(errorCode) && errorHandler.errorHandler(errorCode)) {
             return jsonPost(url, param, resultType);
         }
         //
-        else if (errorHandler.isError(code)) {
-            throw new WXException(String.format("请求: %s 错误码: %s", url, code));
+        else if (errorCode != null && errorHandler.isError(errorCode)) {
+            throw new WXException(String.format("请求: %s 错误码: %s", url, errorCode));
         }
         //
         else {
-            if (resultType == null){
-                return (T) JSONObject.parseObject(result);
-            }
-            else{
+            if (resultType == null) {
+                return (T) object;
+            } else {
                 return JSONObject.parseObject(result, resultType);
             }
         }
