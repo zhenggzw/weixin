@@ -82,6 +82,13 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- 解析 -->
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+
         <!-- Apche HttpClient -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
