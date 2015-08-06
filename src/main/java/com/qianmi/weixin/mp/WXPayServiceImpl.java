@@ -2,11 +2,14 @@ package com.qianmi.weixin.mp;
 
 import com.qianmi.weixin.WXPayService;
 import com.qianmi.weixin.bean.WXContext;
+import com.qianmi.weixin.bean.back.WXPreparePayJSResult;
 import com.qianmi.weixin.bean.back.WXPreparePayResult;
 import com.qianmi.weixin.bean.send.WXPreparePay;
 import com.qianmi.weixin.exception.WXException;
+import com.qianmi.weixin.kit.MapUtil;
 import com.qianmi.weixin.kit.http.WXRequest;
 import com.qianmi.weixin.kit.http.WXRequestErrorHandler;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +21,7 @@ import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -75,6 +79,24 @@ public class WXPayServiceImpl implements WXPayService {
     }
 
     @Override
+    public WXPreparePayJSResult toJSPreparePay(WXPreparePay wxPreparePay) {
+        WXPreparePayJSResult result = new WXPreparePayJSResult();
+        WXPreparePayResult preparePayResult = toPreparePay(wxPreparePay);
+        result.setAppId(wxContext.getAppId());
+        result.setTimeStamp(new Date().getTime() + "");
+        result.setNonceStr(RandomStringUtils.random(16));
+        result.setSignType("MD5");
+        result.setPackage("prepay_id=" + preparePayResult.getPrepayId());
+        try {
+            String sign = toPaySign(BeanUtils.describe(preparePayResult));
+            result.setSign(sign);
+        } catch (Exception e) {
+            throw new WXException("签名失败");
+        }
+        return result;
+    }
+
+    @Override
     public String toPreparePaySign(WXPreparePay wxPreparePay) {
         if (StringUtils.isEmpty(wxPreparePay.getNonceStr())) {
             wxPreparePay.setNonceStr(RandomStringUtils.random(16));
@@ -90,19 +112,23 @@ public class WXPayServiceImpl implements WXPayService {
         signParamMap.put("notify_url", wxPreparePay.getCallback());
         signParamMap.put("trade_type", wxPreparePay.getTradeType());
         signParamMap.put("openid", wxPreparePay.getOpenid());
+        return toPaySign(signParamMap);
+    }
 
-        //
-        List<String> keys = new ArrayList<String>(signParamMap.keySet());
+    @Override
+    public String toPaySign(Map<String, String> params) {
+        List<String> keys = new ArrayList<String>(params.keySet());
         Collections.sort(keys);
 
         //
         StringBuilder toSign = new StringBuilder();
         for (String key : keys) {
-            String value = signParamMap.get(key);
+            String value = params.get(key);
             toSign.append(key + "=" + value + "&");
         }
         toSign.append("key=" + wxContext.getPartnerKey());
         String sign = DigestUtils.md5Hex(toSign.toString()).toUpperCase();
         return sign;
     }
+
 }

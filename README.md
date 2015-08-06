@@ -32,6 +32,7 @@
 * WXPayService
     * toPreparePay(WXPreparePay wxPreparePay) 创建预支付订单
     * toPreparePaySign(WXPreparePay wxPreparePay) 预支单订单签名
+    * toJSPreparePay(WXPreparePay wxPreparePay) 创建JS预支付订单
 
 ## 全部集合
 
