@@ -1,7 +1,7 @@
 package com.qianmi.weixin.bean.send;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2015/7/29.
@@ -11,7 +11,7 @@ public class WXTemplateMessage {
     private String templateId;
     private String url;
     private String topColor;
-    private List<WXTemplateData> templateDataList;
+    private Map<String, WXTemplateData> templateDataMap;
 
     public static class WXTemplateData {
         private String name;
@@ -81,12 +81,8 @@ public class WXTemplateMessage {
         this.topColor = topColor;
     }
 
-    public List<WXTemplateData> getTemplateDataList() {
-        return templateDataList;
-    }
-
-    public void setTemplateDataList(List<WXTemplateData> templateDataList) {
-        this.templateDataList = templateDataList;
+    public Map<String, WXTemplateData> getTemplateDataMap() {
+        return templateDataMap;
     }
 
     public WXTemplateMessage addData(String name, String value) {
@@ -94,10 +90,10 @@ public class WXTemplateMessage {
     }
 
     public WXTemplateMessage addData(String name, String value, String color) {
-        if (templateDataList == null) {
-            templateDataList = new LinkedList<WXTemplateData>();
+        if (templateDataMap == null) {
+            templateDataMap = new HashMap<String, WXTemplateData>();
         }
-        templateDataList.add(new WXTemplateData(name, value, color));
+        templateDataMap.put(name, new WXTemplateData(name, value, color));
         return this;
     }
 }
