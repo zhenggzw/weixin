@@ -8,10 +8,19 @@ public class WXPreparePayJSResult {
 
     private String appId;
     private String timeStamp;
+    private String timestamp;
     private String nonceStr;
     private String _package;
     private String signType;
-    private String sign;
+    private String paySign;
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
 
     public String getPackage() {
         return _package;
@@ -37,12 +46,12 @@ public class WXPreparePayJSResult {
         this.nonceStr = nonceStr;
     }
 
-    public String getSign() {
-        return sign;
+    public String getPaySign() {
+        return paySign;
     }
 
-    public void setSign(String sign) {
-        this.sign = sign;
+    public void setPaySign(String paySign) {
+        this.paySign = paySign;
     }
 
     public String getSignType() {

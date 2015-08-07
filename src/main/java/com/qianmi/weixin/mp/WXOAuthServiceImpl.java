@@ -19,24 +19,14 @@ import java.net.URLEncoder;
  * date: 2015/8/4
  */
 @Service
-public class WXOAuthServiceImpl implements WXOAuthService {
+public class WXOAuthServiceImpl extends WXServiceAdapter implements WXOAuthService {
 
-    /**
-     *
-     */
-    @Autowired
-    private WXContext context;
+    public WXOAuthServiceImpl() {
+    }
 
-    /**
-     *
-     */
-    @Autowired
-    private WXRequestErrorHandler errorHandler;
-
-    /**
-     *
-     */
-    private WXRequest request = new WXRequest(errorHandler);
+    public WXOAuthServiceImpl(WXContext context, WXRequestErrorHandler errorHandler) {
+        super(context, errorHandler);
+    }
 
     @Override
     public WXUser getUser(WXOAuthAccessToken token) throws WXException {

@@ -33,11 +33,4 @@ public interface WXPayService {
      * @return
      */
     String toPreparePaySign(WXPreparePay wxPreparePay);
-
-    /**
-     *
-     * @param params
-     * @return
-     */
-    String toPaySign(Map<String, String> params);
 }

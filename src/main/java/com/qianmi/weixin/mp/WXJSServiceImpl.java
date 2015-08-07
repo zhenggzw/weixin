@@ -7,7 +7,7 @@ import com.qianmi.weixin.bean.back.WXJSTicket;
 import com.qianmi.weixin.exception.WXException;
 import com.qianmi.weixin.kit.http.WXRequest;
 import com.qianmi.weixin.kit.http.WXRequestErrorHandler;
-import com.qianmi.weixin.kit.security.SHA;
+import com.qianmi.weixin.kit.security.WXSecurity;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,29 +21,20 @@ import java.util.concurrent.locks.ReentrantLock;
  * date: 2015/8/4
  */
 @Service
-public class WXJSServiceImpl implements WXJSService {
+public class WXJSServiceImpl extends WXServiceAdapter implements WXJSService {
 
-    /**
-     *
-     */
-    @Autowired
-    private WXContext context;
+    public WXJSServiceImpl() {
+        super();
+    }
 
-    /**
-     *
-     */
-    @Autowired
-    private WXRequestErrorHandler errorHandler;
+    public WXJSServiceImpl(WXContext context, WXRequestErrorHandler errorHandler) {
+        super(context, errorHandler);
+    }
 
     /**
      * 刷新锁
      */
     private Lock refreshTokenLock = new ReentrantLock();
-
-    /**
-     *
-     */
-    private WXRequest request = new WXRequest(errorHandler);
 
     @Override
     public WXJSSignature getJSApiSignature(String url) throws WXException {
@@ -51,7 +42,7 @@ public class WXJSServiceImpl implements WXJSService {
         String noncestr = RandomStringUtils.random(16);
         String jsapiTicket = getJSTicket().getTicket();
         try {
-            String signature = SHA.gen(new String[]{
+            String signature = WXSecurity.SHA1(new String[]{
                     "jsapi_ticket=" + jsapiTicket,
                     "noncestr=" + noncestr,
                     "timestamp=" + timestamp,

@@ -20,24 +20,14 @@ import java.util.Map;
  * date: 2015/8/4
  */
 @Service
-public class WXMessageServiceImpl implements WXMessageService {
+public class WXMessageServiceImpl extends WXServiceAdapter implements WXMessageService {
 
-    /**
-     *
-     */
-    @Autowired
-    private WXContext context;
+    public WXMessageServiceImpl() {
+    }
 
-    /**
-     *
-     */
-    @Autowired
-    private WXRequestErrorHandler errorHandler;
-
-    /**
-     *
-     */
-    private WXRequest request = new WXRequest(errorHandler);
+    public WXMessageServiceImpl(WXContext context, WXRequestErrorHandler errorHandler) {
+        super(context, errorHandler);
+    }
 
     @Override
     public void sendServiceMessage(WXServiceMessage serviceMessage) throws WXException {

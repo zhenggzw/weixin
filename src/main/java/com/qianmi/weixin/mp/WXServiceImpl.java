@@ -28,6 +28,25 @@ public class WXServiceImpl implements WXService {
     private WXMessageService wxMessageService;
 
 
+    public WXServiceImpl() {
+    }
+
+    public void setWxAccessTokenService(WXAccessTokenService wxAccessTokenService) {
+        this.wxAccessTokenService = wxAccessTokenService;
+    }
+
+    public void setWxjsService(WXJSService wxjsService) {
+        this.wxjsService = wxjsService;
+    }
+
+    public void setWxMessageService(WXMessageService wxMessageService) {
+        this.wxMessageService = wxMessageService;
+    }
+
+    public void setWxoAuthService(WXOAuthService wxoAuthService) {
+        this.wxoAuthService = wxoAuthService;
+    }
+
     @Override
     public WXAccessToken getAccessToken() throws WXException {
         return wxAccessTokenService.getAccessToken();

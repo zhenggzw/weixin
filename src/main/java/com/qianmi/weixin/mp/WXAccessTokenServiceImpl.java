@@ -20,13 +20,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * date: 2015/8/4
  */
 @Service
-public class WXAccessTokenServiceImpl implements WXAccessTokenService, WXRequestErrorHandler, InitializingBean {
-
-    /**
-     *
-     */
-    @Autowired
-    private WXContext context;
+public class WXAccessTokenServiceImpl extends WXServiceAdapter implements WXAccessTokenService, WXRequestErrorHandler, InitializingBean {
 
     /**
      * 刷新锁
@@ -35,8 +29,12 @@ public class WXAccessTokenServiceImpl implements WXAccessTokenService, WXRequest
 
     /**
      *
+     * @param context
      */
-    private WXRequest request = new WXRequest(this);
+    public WXAccessTokenServiceImpl(WXContext context) {
+        this.context = context;
+        this.request = new WXRequest(this);
+    }
 
     @Override
     public WXAccessToken getAccessToken() throws WXException {
@@ -93,6 +91,7 @@ public class WXAccessTokenServiceImpl implements WXAccessTokenService, WXRequest
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        super.afterPropertiesSet();
         WXAccessToken accessToken = getAccessToken();
         context.setAccessToken(accessToken);
     }

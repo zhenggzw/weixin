@@ -6,46 +6,42 @@ import com.qianmi.weixin.bean.back.WXPreparePayJSResult;
 import com.qianmi.weixin.bean.back.WXPreparePayResult;
 import com.qianmi.weixin.bean.send.WXPreparePay;
 import com.qianmi.weixin.exception.WXException;
-import com.qianmi.weixin.kit.MapUtil;
-import com.qianmi.weixin.kit.http.WXRequest;
 import com.qianmi.weixin.kit.http.WXRequestErrorHandler;
+import com.qianmi.weixin.kit.security.WXSecurity;
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
-import org.dom4j.io.SAXReader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.Date;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * author: Tkk
  * date: 2015/8/6
  */
 @Service
-public class WXPayServiceImpl implements WXPayService {
+public class WXPayServiceImpl extends WXServiceAdapter implements WXPayService {
 
-    @Autowired
-    private WXContext wxContext;
 
-    @Autowired
-    private WXRequestErrorHandler errorHandler;
+    public WXPayServiceImpl() {
+    }
 
-    @Autowired
-    private WXRequest wxRequest = new WXRequest(errorHandler);
+    public WXPayServiceImpl(WXContext context, WXRequestErrorHandler errorHandler) {
+        super(context, errorHandler);
+    }
 
     @Override
     public WXPreparePayResult toPreparePay(WXPreparePay wxPreparePay) {
         String sign = toPreparePaySign(wxPreparePay);
         String postXml = "<xml>" +
-                "<appid>" + wxContext.getAppId() + "</appid>" +
-                "<mch_id>" + wxContext.getPartnerId() + "</mch_id>" +
+                "<appid>" + context.getAppId() + "</appid>" +
+                "<mch_id>" + context.getPartnerId() + "</mch_id>" +
                 "<nonce_str>" + wxPreparePay.getNonceStr() + "</nonce_str>" +
                 "<sign>" + sign + "</sign>" +
                 "<body><![CDATA[" + wxPreparePay.getBody() + "]]></body>" +
@@ -57,7 +53,7 @@ public class WXPayServiceImpl implements WXPayService {
                 "<openid>" + wxPreparePay.getOpenid() + "</openid>" +
                 "</xml>";
         String url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-        String content = wxRequest.post(url, postXml);
+        String content = request.post(url, postXml);
         WXPreparePayResult result;
         try {
             Document document = DocumentHelper.parseText(content);
@@ -82,14 +78,15 @@ public class WXPayServiceImpl implements WXPayService {
     public WXPreparePayJSResult toJSPreparePay(WXPreparePay wxPreparePay) {
         WXPreparePayJSResult result = new WXPreparePayJSResult();
         WXPreparePayResult preparePayResult = toPreparePay(wxPreparePay);
-        result.setAppId(wxContext.getAppId());
+        result.setAppId(context.getAppId());
         result.setTimeStamp(new Date().getTime() + "");
         result.setNonceStr(RandomStringUtils.random(16));
         result.setSignType("MD5");
         result.setPackage("prepay_id=" + preparePayResult.getPrepayId());
         try {
-            String sign = toPaySign(BeanUtils.describe(preparePayResult));
-            result.setSign(sign);
+            String sign = WXSecurity.MD5(BeanUtils.describe(preparePayResult));
+            result.setPaySign(sign);
+            result.setTimestamp(result.getTimestamp());
         } catch (Exception e) {
             throw new WXException("签名失败");
         }
@@ -102,8 +99,8 @@ public class WXPayServiceImpl implements WXPayService {
             wxPreparePay.setNonceStr(RandomStringUtils.random(16));
         }
         SortedMap<String, String> signParamMap = new TreeMap<String, String>();
-        signParamMap.put("appid", wxContext.getAppId());
-        signParamMap.put("mch_id", wxContext.getPartnerId());
+        signParamMap.put("appid", context.getAppId());
+        signParamMap.put("mch_id", context.getPartnerId());
         signParamMap.put("nonce_str", wxPreparePay.getNonceStr());
         signParamMap.put("body", wxPreparePay.getBody());
         signParamMap.put("out_trade_no", wxPreparePay.getOutTradeNo());
@@ -112,23 +109,7 @@ public class WXPayServiceImpl implements WXPayService {
         signParamMap.put("notify_url", wxPreparePay.getCallback());
         signParamMap.put("trade_type", wxPreparePay.getTradeType());
         signParamMap.put("openid", wxPreparePay.getOpenid());
-        return toPaySign(signParamMap);
-    }
-
-    @Override
-    public String toPaySign(Map<String, String> params) {
-        List<String> keys = new ArrayList<String>(params.keySet());
-        Collections.sort(keys);
-
-        //
-        StringBuilder toSign = new StringBuilder();
-        for (String key : keys) {
-            String value = params.get(key);
-            toSign.append(key + "=" + value + "&");
-        }
-        toSign.append("key=" + wxContext.getPartnerKey());
-        String sign = DigestUtils.md5Hex(toSign.toString()).toUpperCase();
-        return sign;
+        return WXSecurity.SHA1(signParamMap, context.getPartnerKey());
     }
 
 }
