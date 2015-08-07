@@ -11,6 +11,9 @@
     <property name="appId" value=""/>
     <property name="secret" value=""/>
     <property name="token" value=""/>
+    <property name="redirectUri" value=""/>
+    <property name="partnerId" value=""/>
+    <property name="partnerKey" value=""/>
 </bean>
 ```
 
