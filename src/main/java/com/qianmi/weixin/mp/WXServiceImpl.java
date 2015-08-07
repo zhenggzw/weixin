@@ -2,6 +2,7 @@ package com.qianmi.weixin.mp;
 
 import com.qianmi.weixin.*;
 import com.qianmi.weixin.bean.back.*;
+import com.qianmi.weixin.bean.send.WXPreparePay;
 import com.qianmi.weixin.bean.send.WXServiceMessage;
 import com.qianmi.weixin.bean.send.WXTemplateMessage;
 import com.qianmi.weixin.exception.WXException;
@@ -27,8 +28,15 @@ public class WXServiceImpl implements WXService {
     @Autowired
     private WXMessageService wxMessageService;
 
+    @Autowired
+    private WXPayService wxPayService;
+
 
     public WXServiceImpl() {
+    }
+
+    public void setWxPayService(WXPayService wxPayService) {
+        this.wxPayService = wxPayService;
     }
 
     public void setWxAccessTokenService(WXAccessTokenService wxAccessTokenService) {
@@ -110,5 +118,30 @@ public class WXServiceImpl implements WXService {
     @Override
     public WXOAuthAccessToken refreshUserAccessToken(WXOAuthAccessToken wxAccessToken) throws WXException {
         return wxoAuthService.refreshUserAccessToken(wxAccessToken);
+    }
+
+    @Override
+    public WXPreparePayResult toPreparePay(WXPreparePay wxPreparePay) {
+        return wxPayService.toPreparePay(wxPreparePay);
+    }
+
+    @Override
+    public WXPreparePayJSResult toJSPreparePay(WXPreparePay wxPreparePay) {
+        return wxPayService.toJSPreparePay(wxPreparePay);
+    }
+
+    @Override
+    public String toPreparePaySign(WXPreparePay wxPreparePay) {
+        return wxPayService.toPreparePaySign(wxPreparePay);
+    }
+
+    @Override
+    public WXPayResult toPayResult(String xmlContent) {
+        return wxPayService.toPayResult(xmlContent);
+    }
+
+    @Override
+    public boolean checkPayResult(WXPayResult result) {
+        return wxPayService.checkPayResult(result);
     }
 }

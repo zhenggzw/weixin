@@ -1,5 +1,6 @@
 package com.qianmi.weixin;
 
+import com.qianmi.weixin.bean.back.WXPayResult;
 import com.qianmi.weixin.bean.back.WXPreparePayJSResult;
 import com.qianmi.weixin.bean.back.WXPreparePayResult;
 import com.qianmi.weixin.bean.send.WXPreparePay;
@@ -33,4 +34,18 @@ public interface WXPayService {
      * @return
      */
     String toPreparePaySign(WXPreparePay wxPreparePay);
+
+    /**
+     * 验证微信支付回调
+     * @param xmlContent
+     * @return
+     */
+    WXPayResult toPayResult(String xmlContent);
+
+    /**
+     * 验证微信支付回调
+     * @param result
+     * @return
+     */
+    boolean checkPayResult(WXPayResult result);
 }

@@ -71,6 +71,7 @@ public final class WXServiceFactory {
         wxService.setWxjsService(wxjsService);
         wxService.setWxMessageService(wxMessageService);
         wxService.setWxoAuthService(wxoAuthService);
+        wxService.setWxPayService(wxPayService);
         return wxService;
     }
 

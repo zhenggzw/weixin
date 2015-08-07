@@ -2,12 +2,15 @@ package com.qianmi.weixin.mp;
 
 import com.qianmi.weixin.WXPayService;
 import com.qianmi.weixin.bean.WXContext;
+import com.qianmi.weixin.bean.back.WXPayResult;
 import com.qianmi.weixin.bean.back.WXPreparePayJSResult;
 import com.qianmi.weixin.bean.back.WXPreparePayResult;
 import com.qianmi.weixin.bean.send.WXPreparePay;
 import com.qianmi.weixin.exception.WXException;
 import com.qianmi.weixin.kit.http.WXRequestErrorHandler;
 import com.qianmi.weixin.kit.security.WXSecurity;
+import com.qianmi.weixin.kit.xml.XMLUtil;
+import com.thoughtworks.xstream.XStream;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +20,9 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -110,6 +115,35 @@ public class WXPayServiceImpl extends WXServiceAdapter implements WXPayService {
         signParamMap.put("trade_type", wxPreparePay.getTradeType());
         signParamMap.put("openid", wxPreparePay.getOpenid());
         return WXSecurity.SHA1(signParamMap, context.getPartnerKey());
+    }
+
+    @Override
+    public WXPayResult toPayResult(String xmlContent) {
+        try {
+            WXPayResult result = XMLUtil.toBean(xmlContent, "xml", WXPayResult.class);
+            return result;
+        } catch (Exception e) {
+            throw new WXException("解析报文失败");
+        }
+    }
+
+    @Override
+    public boolean checkPayResult(WXPayResult result) {
+        try {
+            if (result == null) {
+                return false;
+            }
+            if (StringUtils.isBlank(result.getSign())) {
+                throw new WXException("签名不能为空");
+            }
+
+            Map<String, String> map = BeanUtils.describe(result);
+            map.remove("sign");
+            String toSign = WXSecurity.SHA1(map, context.getPartnerKey());
+            return result.getSign().equals(toSign);
+        } catch (Exception e) {
+            throw new WXException(e.getMessage());
+        }
     }
 
 }

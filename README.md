@@ -66,7 +66,8 @@
     * toPreparePay(WXPreparePay wxPreparePay) 创建预支付订单
     * toPreparePaySign(WXPreparePay wxPreparePay) 预支单订单签名
     * toJSPreparePay(WXPreparePay wxPreparePay) 创建JS预支付订单
-    * 
+    * toPayResult(String xmlContent) 把微信回调的报文转换为bean
+    * checkPayResult(WXPayResult result) 验证微信回调的报文
 
 ## 加密
 * WXSecurity
