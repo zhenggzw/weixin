@@ -10,7 +10,6 @@ import com.qianmi.weixin.exception.WXException;
 import com.qianmi.weixin.kit.http.WXRequestErrorHandler;
 import com.qianmi.weixin.kit.security.WXSecurity;
 import com.qianmi.weixin.kit.xml.XMLUtil;
-import com.thoughtworks.xstream.XStream;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +19,6 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.Map;
 import java.util.SortedMap;
@@ -32,10 +30,6 @@ import java.util.TreeMap;
  */
 @Service
 public class WXPayServiceImpl extends WXServiceAdapter implements WXPayService {
-
-
-    public WXPayServiceImpl() {
-    }
 
     public WXPayServiceImpl(WXContext context, WXRequestErrorHandler errorHandler) {
         super(context, errorHandler);

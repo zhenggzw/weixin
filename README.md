@@ -22,10 +22,11 @@
 * WXServiceFactory
     * getAccessTokenService(WXContext context)
     * getJSService(WXContext context)
-    * getMessagerService(WXContext context)
+    * getMessageService(WXContext context)
     * getOAuthService(WXContext context)
     * getPayService(WXContext context)
     * getService(WXContext context)
+    * getCardService(WXContext context)
     * getService(String appId, String secret, String token, String partnerId, String partnerKey)
 
 <hr/>
@@ -59,6 +60,8 @@
     * getJSApiSignature(String url) 获取JSAPI签名, 就是wx.config
     * getJSTicket() 获取jsapi_ticket
     * getJSTicket(boolean force) 获取jsapi_tiket, 可刷新, 会锁
+    * getJSAddressSignature(WXOAuthAccessToken accessToken, String url) 获取微信端调用用户地址的签名
+    * getJSCardSignature(String shopId, String cardId, String cardType) 获取微信端拉起卡卷列表的签名
 
 ## 支付操作
 
@@ -79,6 +82,12 @@
     * MD5(String src) 加密后全部转大写
     * MD5(Map<String, String> params) 先排序, 然后按&相加后加密后全部转大写
     * MD5(Map<String, String> params, String key) 先排序, 然后按&相加后key=${key}, 然后加密, 然后转大写
+
+## 卡卷
+
+* WXCardService
+    * getCardInfo(String cardId) 获取卡卷信息
+    * consumeCard(String encyptCode) 核销卡卷
 
 ## 全部集合
 

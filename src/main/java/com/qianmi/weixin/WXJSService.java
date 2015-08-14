@@ -1,7 +1,6 @@
 package com.qianmi.weixin;
 
-import com.qianmi.weixin.bean.back.WXJSSignature;
-import com.qianmi.weixin.bean.back.WXJSTicket;
+import com.qianmi.weixin.bean.back.*;
 import com.qianmi.weixin.exception.WXException;
 
 /**
@@ -18,6 +17,24 @@ public interface WXJSService {
      * @throws com.qianmi.weixin.exception.WXException
      */
     public WXJSSignature getJSApiSignature(String url) throws WXException;
+
+    /**
+     * 获取用户地址的签名数据
+     * @param url
+     * @return
+     * @throws WXException
+     */
+    public WXJSAddressSignature getJSAddressSignature(WXOAuthAccessToken accessToken, String url) throws WXException;
+
+    /**
+     * 获取前端拉起列表
+     * @param shopId
+     * @param cardId
+     * @param cardType
+     * @return
+     * @throws WXException
+     */
+    public WXJSCardSignature getJSCardSignature(String shopId, String cardId, String cardType) throws WXException;
 
     /**
      * @return

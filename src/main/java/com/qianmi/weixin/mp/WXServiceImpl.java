@@ -71,6 +71,11 @@ public class WXServiceImpl implements WXService {
     }
 
     @Override
+    public WXJSAddressSignature getJSAddressSignature(WXOAuthAccessToken accessToken, String url) throws WXException {
+        return wxjsService.getJSAddressSignature(accessToken, url);
+    }
+
+    @Override
     public WXJSTicket getJSTicket() throws WXException {
         return wxjsService.getJSTicket();
     }

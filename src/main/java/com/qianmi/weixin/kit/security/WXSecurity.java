@@ -78,7 +78,7 @@ public class WXSecurity {
         for (String key : keys) {
             String value = params.get(key);
             if (StringUtils.isNotBlank(value)) {
-                order.append(key + "=" + value + "&");
+                order.append(key.toLowerCase() + "=" + value + "&");
             }
         }
         order.trimToSize();
